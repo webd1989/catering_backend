@@ -13,6 +13,7 @@ use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\AmcController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,13 @@ Route::prefix('api')->group(function () {
 	Route::post('/quotation/update',[QuotationController::class, 'update'])->middleware(RequiredParameters::class);
 	Route::post('/quotation/pdf/generate',[QuotationController::class, 'generatePdf'])->middleware(RequiredParameters::class);
 	Route::put('/quotation/status/update/{id}/{status}',[QuotationController::class, 'updateStatus'])->middleware(RequiredParameters::class);
+	
+	Route::post('/category/create',[CategoryController::class, 'create'])->middleware(RequiredParameters::class);
+	Route::post('/category/list',[CategoryController::class, 'getList'])->middleware(RequiredParameters::class);
+	Route::post('/category/get',[CategoryController::class, 'getData'])->middleware(RequiredParameters::class);
+	Route::post('/category/update',[CategoryController::class, 'update'])->middleware(RequiredParameters::class);
+	Route::post('/category/list/all',[CategoryController::class, 'getListAll'])->middleware(RequiredParameters::class);
+	Route::put('/category/status/update/{id}/{status}',[CategoryController::class, 'updateStatus'])->middleware(RequiredParameters::class);
 	
 
 	Route::post('/customer/create',[ContactController::class, 'createContact'])->middleware(RequiredParameters::class);
