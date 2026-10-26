@@ -28,11 +28,11 @@ class UserController extends Controller{
 		return response()->json(['success'=>true,'user'=>$user],200);
 	}
 	public function getAllList(Request $request){
-		$users = self::$Users->select('id','name')->where('type','User')->where('status','!=',3)->get();
+		$users = self::$Users->select('id','name')->where('type','Employee')->where('status','!=',3)->get();
 		return response()->json(['success'=>true,'users'=>$users],200);
 	}
 	public function getList(Request $request){
-		$query = self::$Users->where('type','User')->where('status','!=',3);
+		$query = self::$Users->where('type','Employee')->where('status','!=',3);
 		
 		if($request->input('search_key')  && $request->input('search_key') != ""){
             $SearchKeyword = $request->input('search_key');
@@ -47,8 +47,6 @@ class UserController extends Controller{
 		
 		$users = $query->paginate(10);
 		foreach($users as $key => $user){
-			$f_data = self::$Users->select('id','name')->where('id',$user->f_city)->first();
-			$user->franchise_name = isset($f_data->name) ? $f_data->name : 'N/A';
 			$user->created_date = date('m/d/Y',strtotime($user->created_at));
 		}
 		return response()->json(['success'=>true,'users'=>$users],200);
@@ -81,16 +79,14 @@ class UserController extends Controller{
 			'name' => 'required',
 			'phone' => 'required|numeric',
 			'email' => 'required|email',
-			'password' => 'required',
-			'level' => 'required',
+			'password' => 'required'
 			
 		],[
 			'name.required' => 'Please enter your name.',
 			'phone.required' => 'Please enter your phone.',
 			'email.required' => 'Please enter your email.',
 			'email.email' => 'Please enter correct email.',
-			'password.required' => 'Please enter your password.',
-			'level.required' => 'Please select level.',
+			'password.required' => 'Please enter your password.'
 			
 		]);
 		if($validator->fails()){
@@ -107,42 +103,38 @@ class UserController extends Controller{
 			if($errors->first('password')){
 				return response()->json(['success'=>false, 'message' => $errors->first('password')]);
 			}
-			if($errors->first('level')){
-				return response()->json(['success'=>false, 'message' => $errors->first('level')]);
-			}
 		}else{
-			$count = self::$Users->where('email',$request->email)->count();
-			if($count == 0){
-				$setData = [
-				'name' => ucwords($request->name),
-				'phone' => $request->phone,
-				'level' => $request->level,
-				'email' => strtolower($request->email),
-				'password' => password_hash($request->post('password'),PASSWORD_BCRYPT),
-				'type' => 'User',
-				'designation' => ucwords($request->role),
-				'parent_id' => $GLOBALS['USER.ID']
-				];
-				self::$Users->create($setData);
-				return response()->json(['success'=>true, 'message' => 'Employee added successfully']);
-			}else{
+			$emailCount = self::$Users->where('email',$request->email)->count();
+			if($emailCount > 0){
 				return response()->json(['success'=>false, 'message' => 'Email address already exist']);
 			}
+			$phoneCount = self::$Users->where('phone',$request->phone)->count();
+			if($phoneCount > 0){
+				return response()->json(['success'=>false, 'message' => 'Phone number already exist']);
+			}
+			$setData = [
+			'name' => ucwords($request->name),
+			'phone' => $request->phone,
+			'email' => strtolower($request->email),
+			'password' => password_hash($request->post('password'),PASSWORD_BCRYPT),
+			'type' => 'Employee',
+			'parent_id' => $GLOBALS['USER.ID']
+			];
+			self::$Users->create($setData);
+			return response()->json(['success'=>true, 'message' => 'Employee added successfully']);
 		}
 	}
 	public function updateUser(Request $request){
 		$validator = Validator::make($request->all(), [
 			'name' => 'required',
 			'phone' => 'required|numeric',
-			'email' => 'required|email',
-			'level' => 'required',
+			'email' => 'required|email'
 			
 		],[
 			'name.required' => 'Please enter your name.',
 			'phone.required' => 'Please enter your phone.',
 			'email.required' => 'Please enter your email.',
-			'email.email' => 'Please enter correct email.',
-			'level.required' => 'Please select level.',
+			'email.email' => 'Please enter correct email.'
 			
 		]);
 		if($validator->fails()){
@@ -156,27 +148,25 @@ class UserController extends Controller{
 			if($errors->first('email')){
 				return response()->json(['success'=>false, 'message' => $errors->first('email')]);
 			}
-			if($errors->first('level')){
-				return response()->json(['success'=>false, 'message' => $errors->first('level')]);
-			}
 		}else{
-			$count = self::$Users->where('email',$request->email)->where('id','!=',$request->id)->count();
-			if($count == 0){
-				
-				$setData['name'] = ucwords($request->name);
-				$setData['phone'] = $request->phone;
-				$setData['level'] = $request->level;
-				$setData['email'] = strtolower($request->email);
-				$setData['designation'] = ucwords($request->role);
-				if($request->post('password') != ""){
-					$setData['password'] = password_hash($request->post('password'),PASSWORD_BCRYPT);
-				}
-				
-				self::$Users->where('id',$request->id)->update($setData);
-				return response()->json(['success'=>true, 'message' => 'Employee updated successfully']);
-			}else{
+			$emailCount = self::$Users->where('email',$request->email)->where('id','!=',$request->id)->count();
+			if($emailCount > 0){
 				return response()->json(['success'=>false, 'message' => 'Email address already exist']);
 			}
+			$phoneCount = self::$Users->where('phone',$request->phone)->where('id','!=',$request->id)->count();
+			if($phoneCount > 0){
+				return response()->json(['success'=>false, 'message' => 'Phone number already exist']);
+			}	
+			$setData['name'] = ucwords($request->name);
+			$setData['phone'] = $request->phone;
+			$setData['email'] = strtolower($request->email);
+			if($request->post('password') != ""){
+				$setData['password'] = password_hash($request->post('password'),PASSWORD_BCRYPT);
+			}
+			
+			self::$Users->where('id',$request->id)->update($setData);
+			return response()->json(['success'=>true, 'message' => 'Employee updated successfully']);
+			
 		}
 	}
 }

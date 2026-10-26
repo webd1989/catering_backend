@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Quotations extends Authenticatable
+class LogisticRanges extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -17,14 +17,11 @@ class Quotations extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'added_by',
-        'description',
-		'title',
-		'status'
+     protected $fillable = [
+        'title',
+        'status','amount'
     ];
-
-
+	
 	public function GetRecordById($id){
 		return $this::where('id', $id)->first();
 	}
@@ -36,5 +33,4 @@ class Quotations extends Authenticatable
 		$Record = $this::create($Details);
 		return $Record;
 	}
-	
 }

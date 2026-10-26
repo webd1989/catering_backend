@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class InvoiceItems extends Authenticatable
+class Units extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -18,16 +18,11 @@ class InvoiceItems extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'added_by',
-        'invoice_id',
-        'item',
-		'qty',
-        'hsn',
-		'price',
-		'status'
+        'unit_name',
+        'short_name',
+        'status'
     ];
-
-
+	
 	public function GetRecordById($id){
 		return $this::where('id', $id)->first();
 	}
@@ -39,5 +34,4 @@ class InvoiceItems extends Authenticatable
 		$Record = $this::create($Details);
 		return $Record;
 	}
-	
 }

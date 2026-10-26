@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\PagesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +14,13 @@ use App\Http\Controllers\OrdersController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::any('/',[PagesController::class, 'index'])->name('index');
+Route::any('/about-us',[PagesController::class, 'aboutUs'])->name('aboutUs');
+Route::any('/services',[PagesController::class, 'services'])->name('services');
+Route::any('/contact-us',[PagesController::class, 'contactUs'])->name('contactUs');
+Route::any('/gallery',[PagesController::class, 'gallery'])->name('gallery');
 
-Route::any('/view/prescription/{image}',[OrdersController::class, 'viewPrescription']);
+Route::any('/save-contact',[PagesController::class, 'saveContact'])->name('saveContact');
+
 
 include('api.php');

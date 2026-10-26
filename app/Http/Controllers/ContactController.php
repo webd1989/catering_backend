@@ -36,14 +36,18 @@ class ContactController extends Controller{
 		return response()->json(['success'=>true,'user'=>$user],200);
 	}
 	public function getListAll(Request $request){
-		$query = self::$Customers->where('status','!=',3)->orderBy('company','ASC')->get();
+		$query = self::$Customers->where('status','!=',3);
+		if($request->input('type')  && $request->input('type') != ""){
+			$query->where('type', $request->input('type')); 
+		}
+		$query = $query->orderBy('company','ASC')->get();
 		return response()->json(['success'=>true,'users'=>$query],200);
 	}
 	public function getList(Request $request){
 		
 		$loginUserData = self::$Users->select('type')->where('id',$GLOBALS['USER.ID'])->first();
 		
-		$query = self::$Customers->where('status','!=',3);
+		$query = self::$Customers->where('status','!=',3)->where('type',$request->type);
 		
 		
 		if($request->input('search_key')  && $request->input('search_key') != ""){
@@ -85,7 +89,15 @@ class ContactController extends Controller{
 				return response()->json(['success'=>false, 'message' => $errors->first('name')]);
 			}
 		}else{
-
+			$emailCount = self::$Customers->where('email',$request->email)->count();
+			if($emailCount > 0){
+				return response()->json(['success'=>false, 'message' => 'Email address already exist']);
+			}
+			$phoneCount = self::$Customers->where('phone',$request->phone)->count();
+			if($phoneCount > 0){
+				return response()->json(['success'=>false, 'message' => 'Phone number already exist']);
+			}
+			
 			$setData['added_by'] = $GLOBALS['USER.ID'];
 			$setData['name'] = $request->name;
 			$setData['phone'] = $request->phone;
@@ -95,8 +107,9 @@ class ContactController extends Controller{
 			$setData['gst_no'] = $request->gst_no;
 			$setData['company'] = $request->company;
 			$setData['description'] = $request->description;
+			$setData['type'] = $request->type;
 			self::$Customers->create($setData);
-			return response()->json(['success'=>true, 'message' => 'Customer added successfully']);
+			return response()->json(['success'=>true, 'message' => 'Record added successfully']);
 			
 		}
 	}
@@ -114,7 +127,15 @@ class ContactController extends Controller{
 				return response()->json(['success'=>false, 'message' => $errors->first('name')]);
 			}
 		}else{
-
+			$emailCount = self::$Customers->where('email',$request->email)->where('id','!=',$request->id)->count();
+			if($emailCount > 0){
+				return response()->json(['success'=>false, 'message' => 'Email address already exist']);
+			}
+			$phoneCount = self::$Customers->where('phone',$request->phone)->where('id','!=',$request->id)->count();
+			if($phoneCount > 0){
+				return response()->json(['success'=>false, 'message' => 'Phone number already exist']);
+			}
+			
 			$setData['name'] = $request->name;
 			$setData['phone'] = $request->phone;
 			$setData['email'] = $request->email;
@@ -123,9 +144,10 @@ class ContactController extends Controller{
 			$setData['gst_no'] = $request->gst_no;
 			$setData['company'] = $request->company;
 			$setData['description'] = $request->description;
+			$setData['type'] = $request->type;
 			
 			self::$Customers->where('id',$request->id)->update($setData);
-			return response()->json(['success'=>true, 'message' => 'Customer updated successfully']);
+			return response()->json(['success'=>true, 'message' => 'Record updated successfully']);
 		}
 	}
 }

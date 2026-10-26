@@ -27,7 +27,7 @@ class Customers extends Authenticatable
 		'city',
 		'gst_no',
 		'company',
-		'description'
+		'description','type'
     ];
 
 	public function GetRecordById($id){

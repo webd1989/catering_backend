@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class AnnualMaintenances extends Authenticatable
+class Roles extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -17,14 +17,11 @@ class AnnualMaintenances extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'added_by',
+     protected $fillable = [
         'title',
-        'description',
-		'status',
-		'customer_id'
+        'status'
     ];
-
+	
 	public function GetRecordById($id){
 		return $this::where('id', $id)->first();
 	}

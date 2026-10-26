@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Invoices extends Authenticatable
+class BookingEvents extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -18,18 +18,11 @@ class Invoices extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'added_by',
-        'customer_id',
-		'bill_date',
-		'bill_no',
-		'amount',
-		'status',
-		'file_name',
-		'is_paid',
-		'advance',
-		'total_amount',
-		'currency',
-		'notes','day','month','year'
+        'booking_id',
+        'event_type_id',
+		'rate',
+		'no_of_guest','event_date',
+		'total','venue','sub_venue','event_time'
     ];
 
 

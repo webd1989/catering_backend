@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Targets extends Authenticatable
+class RawMaterials extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -18,18 +18,17 @@ class Targets extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'added_by',
-        'target_amt',
-        'month',
-		'year',
-        'status',
-		'date_str',
-		'target_piece',
-		'to_month',
-		'to_year',
+        'category_id',
+        'unit_id',
+        'material_name',
+        'material_code',
+        'opening_stock',
+        'current_stock',
+        'minimum_stock',
+        'purchase_rate',
+        'status'
     ];
-
-
+	
 	public function GetRecordById($id){
 		return $this::where('id', $id)->first();
 	}
@@ -41,5 +40,4 @@ class Targets extends Authenticatable
 		$Record = $this::create($Details);
 		return $Record;
 	}
-	
 }

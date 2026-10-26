@@ -38,6 +38,10 @@ class CategoryController extends Controller{
 		$records = self::$Categories->where('status','!=',3)->where('parent_id',0)->orderBy('title','ASC')->get();
 		return response()->json(['success'=>true,'records'=>$records],200);
 	}
+	public function getSubCateListAll(Request $request){
+		$records = self::$Categories->where('status','!=',3)->where('parent_id',$request->category_id)->orderBy('title','ASC')->get();
+		return response()->json(['success'=>true,'records'=>$records],200);
+	}
 	public function getList(Request $request){
 		$query = self::$Categories->where('status','!=',3);
 		if($request->type == 'Category'){
